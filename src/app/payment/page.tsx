@@ -6,7 +6,6 @@ export default async function Payment() {
     <main>
       <Flex vertical>
         <Link href="/payment/cash">Record Cash Payment</Link>
-        <Link href="/payment/digital">Record Digital Payment</Link>
       </Flex>
     </main>
   );

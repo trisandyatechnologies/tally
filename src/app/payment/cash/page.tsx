@@ -1,10 +1,9 @@
-import RecordCash from "@/app/components/RecordCashpayment";
-
+import RecordCash from "@/components/PaymentForm";
 
 export default async function Payment() {
   return (
     <main>
-      <RecordCash/>
+      <RecordCash />
     </main>
   );
 }
