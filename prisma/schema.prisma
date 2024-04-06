@@ -42,7 +42,7 @@ model User {
     address        String
     gstNo          String
     contact        String
-    gmail          String
+    amount         Float
     goodsSuppliers GoodsSupplier[]
     payments       Payment[]
     bills          Bill[]
