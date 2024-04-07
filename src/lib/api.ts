@@ -1,7 +1,10 @@
 import { API_ROOT } from "@/utils/config";
 
 
-import { User } from "@prisma/client";
+import { User,  } from "@prisma/client";
+// import {Bill } from "@prisma/client";
+
+
 import { message } from "antd";
 
 export const getUser = async (userId: string) => {
@@ -24,6 +27,31 @@ export const updateUser = async (
   }).then((res) => res.json());
   return user;
 };
+
+
+//Use this until we get have bill schema, 
+interface Bill {
+    id: string;
+    name: string;
+}
+
+export const addBill = async(billData:Partial<Bill>): Promise<Bill> => {
+    const response = await fetch(`${API_ROOT}bills`,{
+        method: "POST", 
+        body: JSON.stringify(billData),
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    })
+    .then((res) => res.json())
+    .catch((error) => {
+        throw new Error(`Failed to add Bill ${error}`)
+    })
+    
+    return response.json();
+}
+
+
 
 export const getAllGoodsSuppliers = async(userId: string) => {
     const apiUrl = `${API_ROOT}user/{userId}/goodsSuppliers`;

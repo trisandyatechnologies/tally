@@ -33,3 +33,8 @@ export async function GET(req: Request, { params }: UserRequestParams) {
         return NextResponse.json({ error: "Internal server error" }, { status: 500 });
     }
 }
+
+
+export async function POST(req: Request, {params,body}:UserRequestParams){
+
+}
