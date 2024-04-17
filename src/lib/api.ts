@@ -1,70 +1,172 @@
+
+
+
+
 import { API_ROOT } from "@/utils/config";
+import { User, Bill, GoodsSupplier } from "@prisma/client";
 
-
-import { User,  } from "@prisma/client";
-// import {Bill } from "@prisma/client";
-
-
-import { message } from "antd";
 
 export const getUser = async (userId: string) => {
-  const user = await fetch(`${API_ROOT}users/${userId}`,{cache:"no-cache"}).then((res) =>
-    res.json()
-  );
-  return user;
+    const user = await fetch(`${API_ROOT}users/${userId}`, { cache: "no-cache" }).then((res) =>
+        res.json()
+    );
+    return user;
 };
 
 export const updateUser = async (
-  userId: string,
-  updateBody: Partial<User>
+    userId: string,
+    updateBody: Partial<User>
 ): Promise<User> => {
-  const user = await fetch(`${API_ROOT}users/${userId}`, {
-    method: "PUT",
-    body: JSON.stringify(updateBody),
-    headers: {
-      "Content-Type": "application/json",
-    },
-  }).then((res) => res.json());
-  return user;
+    const user = await fetch(`${API_ROOT}users/${userId}`, {
+        method: "PUT",
+        body: JSON.stringify(updateBody),
+        headers: {
+            "Content-Type": "application/json",
+        },
+    }).then((res) => res.json());
+    return user;
 };
 
 
-//Use this until we get have bill schema, 
-interface Bill {
-    id: string;
-    name: string;
-}
 
-export const addBill = async(billData:Partial<Bill>): Promise<Bill> => {
-    const response = await fetch(`${API_ROOT}bills`,{
-        method: "POST", 
-        body: JSON.stringify(billData),
+
+
+//Get all bills associated with the speicfic user and goodsSupplier
+export const getAllBillsForUser = (
+    userId: string,
+    supplierId?: string,
+    billType?: string,
+    date?: string
+): Promise<Bill[]> => {
+
+
+    let apiUrl = `${API_ROOT}bill?userId=${userId}`;
+
+    console.log("UserId in server", userId);
+
+    if (supplierId) {
+        console.log("supplierId in server", supplierId);
+        apiUrl += `&supplierId=${supplierId}`;
+    }
+
+    if (billType) {
+        apiUrl += `&billType=${billType}`;
+    }
+
+    if (date) {
+        apiUrl += `&date=${date}`;
+    }
+
+    return fetch(apiUrl, {
+        method: "GET",
         headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
+        },
+    }).then((response) => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
         }
-    })
-    .then((res) => res.json())
-    .catch((error) => {
-        throw new Error(`Failed to add Bill ${error}`)
-    })
-    
-    return response.json();
-}
+        return response.json();
+    }).then((data) => {
+        return data.bills as Bill[];
+    }).catch((error) => {
+        console.error('Error fetching bills:', error);
+        throw error; 
+    });
+};
 
 
 
-export const getAllGoodsSuppliers = async(userId: string) => {
-    const apiUrl = `${API_ROOT}user/{userId}/goodsSuppliers`;
-    const goodsSuppliers = await fetch(apiUrl, {cache: "no-cache"})
+
+// export const addBillForUser = async (addBillBody: Bill) => {
+
+//     console.log(addBillBody);
+//     let apiUrl = `${API_ROOT}bill/new`;
+//     console.log(apiUrl);
+//     // console.log("JSON BODY", JSON.stringify(addBillBody));
+
+
+
+//     const addBill = await fetch(apiUrl, {
+//         method: "POST",
+//         body: JSON.stringify(addBillBody),
+//         headers: {
+//             "Content-Type": "application/json",
+//         }
+//     })
+//     .then((res) => res.json());
+//     return addBill;
+// }
+
+
+export const addBillForUser = async (orderBody: Partial<Bill>) => {
+    const order = await fetch(`${API_ROOT}bill/new`, {
+        method: "POST",
+        body: JSON.stringify(orderBody),
+        headers: {
+            "Content-Type": "application/json",
+        },
+    }).then((res) => res.json());
+    return order;
+};
+
+
+
+
+
+
+
+
+export const getAllGoodsSuppliers = async (userId: string) => {
+    const apiUrl = `${API_ROOT}supplier?userId=${userId}`;
+    console.log("THis is apiUrl", apiUrl);
+    const goodsSuppliers = await fetch(apiUrl)
         .then((res) => {
-            if(!res.ok){
+            if (!res.ok) {
                 throw new Error(res.statusText);
             }
             return res.json();
         })
         .catch((error) => {
-            message.error(`Failed to fetch goods suppliers: ${error.message}`);
+            console.error(`Failed to fetch goods suppliers: ${error.message}`);
         });
+    console.log("goodsSuppliers are");
+    console.log(apiUrl);
+    console.log(goodsSuppliers);
+    return goodsSuppliers;
 
-        return goodsSuppliers;
+    // // Mock data
+    // // Generate an array of 100 mock suppliers
+    // const goodsSuppliers = Array.from({ length: 100 }, (_, i) => ({
+    //     id: `${i + 1}`,
+    //     name: `Supplier ${i + 1}`,
+    // }));
+
+    // return new Promise((resolve, reject) => {
+    //     setTimeout(() => {
+    //         resolve(goodsSuppliers);
+    //     }, 1000);
+    // });
 }
+
+
+export const createSupplier = async (orderBody: Partial<GoodsSupplier>) => {
+    const order = await fetch(`${API_ROOT}supplier`, {
+        method: "POST",
+        body: JSON.stringify(orderBody),
+        headers: {
+            "Content-Type": "application/json",
+        },
+    }).then((res) => res.json());
+    return order;
+};
+
+export const getSupplier = async () => {
+    const suppliers = await fetch(`${API_ROOT}supplier`).then((res) => res.json());
+    return suppliers;
+};
+
+export const getBills = async () => {
+    const bills = await fetch(`${API_ROOT}bill/view`).then((res) => res.json());
+    return bills;
+};

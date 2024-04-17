@@ -25,6 +25,7 @@ import Link from "next/link";
 import { signIn, useSession } from "next-auth/react";
 import { message } from "@/lib/notify";
 import { useRouter } from "next/navigation";
+import { error } from "console";
 
 const Signup: React.FC = () => {
   const {
@@ -46,6 +47,7 @@ const Signup: React.FC = () => {
       ...values,
     })) ?? { error: true };
     if (err) {
+     console.log(err);
       message.error("Failed to create account, email/phone already exists.");
     } else {
       // TODO: based on role
