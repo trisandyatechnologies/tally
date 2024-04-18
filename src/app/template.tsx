@@ -5,7 +5,7 @@ import { Layout, Flex, Typography } from "antd";
 
 import { SessionProvider } from "next-auth/react";
 import { useSession } from 'next-auth/react';
-import Header from "./components/Header";
+import Header from "../components/Header";
 import Signin from "./signin/page";
 
 const { Content } = Layout;

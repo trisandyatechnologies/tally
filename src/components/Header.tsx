@@ -123,7 +123,9 @@ const HeaderMenu: React.FC = () => {
         display: "flex",
         flex: xs ? 1 : 1,
         justifyContent: "end",
-        border: "none",
+        // border: "solid 1px skyblue",
+        borderRadius: 20,
+        marginTop: 7,
         
       }}
       disabledOverflow
@@ -157,13 +159,15 @@ const Header: React.FC = () => {
               {appName}
             </Typography.Title>
           ) : (
-            <Image
-              src={appLogo}
-              alt={appName}
-              width={48}
-              height={48}
-              preview={false}
-            />
+            <>
+            </>
+            // <Image
+            //   src={appLogo}
+            //   alt={appName}
+            //   width={48}
+            //   height={48}
+            //   preview={false}
+            // />
           )}
         </Link>
         
