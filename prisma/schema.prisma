@@ -1,5 +1,3 @@
-
-
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
@@ -14,7 +12,6 @@ datasource db {
 generator client {
     provider = "prisma-client-js"
 }
-
 
 // Relationships
 
@@ -33,8 +30,6 @@ generator client {
 // GoodsSupplier and Bill: One-to-many
 // A goods supplier can have multiple bills, but each bill is associated with one goods supplier.
 
-
-
 model User {
     id             String          @id @default(auto()) @map("_id") @db.ObjectId
     email          String          @unique
@@ -48,34 +43,39 @@ model User {
     goodsSuppliers GoodsSupplier[]
     payments       Payment[]
     bills          Bill[]
+    createdAt      DateTime        @default(now())
 }
 
 model GoodsSupplier {
-    id       String    @id @default(auto()) @map("_id") @db.ObjectId
-    name     String
-    address  String
-    contact  String
-    gstNo    String
-    aadhar   String
-    owner    String
-    userId   String    @db.ObjectId
-    user     User      @relation(fields: [userId], references: [id])
-    payments Payment[]
-    bills    Bill[]
+    id        String    @id @default(auto()) @map("_id") @db.ObjectId
+    name      String
+    address   String
+    contact   String
+    gstNo     String
+    aadhar    String
+    owner     String
+    amount    Float
+    userId    String    @db.ObjectId
+    user      User      @relation(fields: [userId], references: [id])
+    payments  Payment[]
+    bills     Bill[]
+    createdAt DateTime  @default(now())
 }
 
 model Payment {
-    id              String        @id @default(auto()) @map("_id") @db.ObjectId
-    date            DateTime
-    amount          Float
-    voucherNo       String?
-    receiver        String
-    note            String?
-    type            PaymentType
-    goodsSupplierId String        @db.ObjectId
-    goodsSupplier   GoodsSupplier @relation(fields: [goodsSupplierId], references: [id])
-    userId          String        @db.ObjectId
-    user            User          @relation(fields: [userId], references: [id])
+    id                    String        @id @default(auto()) @map("_id") @db.ObjectId
+    date                  DateTime
+    amount                Float
+    voucherNo             String?
+    receiver              String
+    note                  String?
+    type                  PaymentType
+    goodsSupplierId       String        @db.ObjectId
+    goodsSupplier         GoodsSupplier @relation(fields: [goodsSupplierId], references: [id])
+    beforeAmount          Float
+    currentsupplierAmount Float
+    userId                String        @db.ObjectId
+    user                  User          @relation(fields: [userId], references: [id])
 }
 
 enum PaymentType {
@@ -84,15 +84,18 @@ enum PaymentType {
 }
 
 model Bill {
-    id              String        @id @default(auto()) @map("_id") @db.ObjectId
-    name            String
-    date            DateTime
-    amount          Float?
-    type            BillType
-    goodsSupplierId String        @db.ObjectId
-    goodsSupplier   GoodsSupplier @relation(fields: [goodsSupplierId], references: [id])
-    userId          String        @db.ObjectId
-    user            User          @relation(fields: [userId], references: [id])
+    id                    String            @id @default(auto()) @map("_id") @db.ObjectId
+    name                  String
+    date                  DateTime
+    amount                Float?
+    type                  BillType
+    goodsSupplierId       String            @db.ObjectId
+    goodsSupplier         GoodsSupplier     @relation(fields: [goodsSupplierId], references: [id])
+    beforeAmount          Float
+    currentsupplierAmount Float
+    userId                String            @db.ObjectId
+    user                  User              @relation(fields: [userId], references: [id])
+    billStatus            BillPaymentStatus @default(NOT_PAID)
 }
 
 enum BillType {
@@ -100,5 +103,7 @@ enum BillType {
     NON_GST
 }
 
-
-
+enum BillPaymentStatus {
+    PAID
+    NOT_PAID
+}
