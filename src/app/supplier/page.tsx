@@ -14,30 +14,7 @@ export default function AddGoodsSupplier() {
     const [loading, setLoading] = useState(false);
     const { data: session } = useSession();
 
-    // const handleSubmit = async (values: any) => {
-    //     setLoading(true);
-    //     try {
-    //         const response = await fetch(`${API_ROOT}supplier`, {
-    //             method: 'POST',
-    //             headers: {
-    //                 'Content-Type': 'application/json',
-    //             },
-    //             body: JSON.stringify({ ...values, userId: session?.user?.id }), // Use session user ID
-    //         });
-
-    //         if (!response.ok) {
-    //             throw new Error('Failed to add goods supplier');
-    //         }
-
-    //         // Redirect to the appropriate page after successful submission
-    //         router.push('/dashboard'); // Change '/dashboard' to the desired destination
-    //     } catch (error) {
-    //         console.error('Error adding goods supplier:', error);
-    //         // Handle error states
-    //     } finally {
-    //         setLoading(false);
-    //     }
-    // };
+   
 
     const [form] = Form.useForm()
     const onFinish = async (values: any) => {

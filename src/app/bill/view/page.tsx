@@ -22,6 +22,7 @@ const Bills: React.FC = () => {
     const goodsFromStore = useGoodsStore(state => state.goods);
 
     const fetchBills = useBillsStore(state => state.fetchBills);
+    const fetchGoods = useGoodsStore(state => state.setGoods);
 
     
     const filteredBills = billsFromStore.filter(bill => {
@@ -39,6 +40,7 @@ const Bills: React.FC = () => {
 
     useEffect(() => {
         setLoading(true);
+        fetchGoods();
         fetchBills(goodsFromStore).
             finally(() => setLoading(false));
     }, []);

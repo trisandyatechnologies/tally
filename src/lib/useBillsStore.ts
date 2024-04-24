@@ -41,14 +41,17 @@ import moment from 'moment'; // Import moment for date formatting
 
 interface useBillsStore {
     bills: Bill[];
+    notTransformedBills :Bill[];
     fetchBills: (goods: GoodsSupplier[]) => Promise<void>;
 }
 
 export const useBillsStore = create<useBillsStore>((set, get) => ({
     bills: [],
+    notTransformedBills : [],
     fetchBills: async (goods: GoodsSupplier[]) => {
         try {
             const bills = await getBills();
+            set({ notTransformedBills: bills });
             const transformedBills = transformBillData(bills, goods);
             set({ bills: transformedBills });
         } catch (error) {

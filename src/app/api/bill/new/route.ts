@@ -1,4 +1,6 @@
 
+import { GoodsSupplier } from '@prisma/client';
+
 
 import GoodsSupplierSelect from "@/components/GoodsSupplierSelect";
 import { authOptions } from "@/lib/auth";
@@ -16,11 +18,36 @@ export async function POST(req: NextRequest, res: Response) {
         const orderBody = await req.json();
         console.log({ orderBody });
 
-        const { goodsSupplierId, ...orderData } = orderBody;
+        const { goodsSupplier,amount, ...orderData } = orderBody;
+        console.log("GoodsSupplier:", orderBody.goodsSupplier);
+        // console.log("Goods Supplier ID",goodsSupplierId);
+    
+        const getgoodsSupplier = await prisma.goodsSupplier.findUnique({
+            where:{
+                id: goodsSupplier
+            }
+        })
+
+
+        const previousAmount = getgoodsSupplier?.amount;
+
+        const GoodsSupplierAmountUpdate = await prisma.goodsSupplier.update({
+            where: {
+                id: goodsSupplier
+            },
+            data: {
+                amount: previousAmount+ amount,
+            }
+
+
+        })
 
         const order = await prisma.bill.create({
             data: {
                 ...orderData,
+                beforeAmount: previousAmount,
+                currentsupplierAmount: previousAmount + amount,
+                amount,
                 user: {
                     connect: {
                         id: session?.user.id,

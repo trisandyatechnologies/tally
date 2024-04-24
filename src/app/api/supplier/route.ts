@@ -52,7 +52,9 @@ export async function POST(req: NextRequest, res: Response) {
     console.log({ orderBody });
     const order = await prisma.goodsSupplier.create({
         data: {
+            
             ...orderBody,
+            
             user: {
                 connect: {
                     id: session?.user.id,

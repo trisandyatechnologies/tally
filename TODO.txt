@@ -1,0 +1,17 @@
+
+Bugs:
+1.Unknown GoodsProvider
+2.Incorrect date(antdesign)
+
+
+Features:
+1.Bill Selection for payment
+2.HomePage or dashboard integration.
+3.Date format(balance-sheet)
+
+
+TODO: with icon ,
+Firname, 
+Name,
+drawer to add fill additional data
+.dot to local string to show payment 
