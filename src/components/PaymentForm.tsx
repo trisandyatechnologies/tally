@@ -14,7 +14,7 @@ import {
 import { Option } from "antd/es/mentions";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
-import Payment from "../payment/page";
+
 import { PaymentMethod, PaymentType } from "@prisma/client";
 import { useRouter } from "next/navigation";
 const formItemLayout = {
