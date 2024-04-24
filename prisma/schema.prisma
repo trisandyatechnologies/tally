@@ -65,22 +65,29 @@ model GoodsSupplier {
 }
 
 model Payment {
-    id              String        @id @default(auto()) @map("_id") @db.ObjectId
-    date            DateTime
-    amount          Float
-    voucherNo       String?
-    receiver        String
-    note            String?
-    type            PaymentType
-    goodsSupplierId String        @db.ObjectId
-    goodsSupplier   GoodsSupplier @relation(fields: [goodsSupplierId], references: [id])
-    userId          String        @db.ObjectId
-    user            User          @relation(fields: [userId], references: [id])
+  id              String         @id @default(auto()) @map("_id") @db.ObjectId
+  date            DateTime
+  amount          Int
+  voucherNo       String?
+  receiver        String
+  note            String?
+  type            PaymentType
+  paymentMethod   PaymentMethod?
+  goodsSupplierId String?        @db.ObjectId
+  goodsSupplier   GoodsSupplier? @relation(fields: [goodsSupplierId], references: [id])
+  userId          String         @db.ObjectId
+  user            User           @relation(fields: [userId], references: [id])
+}
+
+enum PaymentMethod {
+  GOOGLEPAY
+  PHONEPAY
+  OTHER
 }
 
 enum PaymentType {
-    CASH
-    DIGITAL
+  CASH
+  DIGITAL
 }
 
 model Bill {

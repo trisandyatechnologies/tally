@@ -3,7 +3,7 @@
 
 
 import { API_ROOT } from "@/utils/config";
-import { User, Bill, GoodsSupplier } from "@prisma/client";
+import { User, Bill, GoodsSupplier, Payment } from "@prisma/client";
 
 
 export const getUser = async (userId: string) => {
@@ -108,6 +108,46 @@ export const addBillForUser = async (orderBody: Partial<Bill>) => {
         },
     }).then((res) => res.json());
     return order;
+};
+export const createPayment = async (paymentBody: Payment) => {
+  const payment = await fetch(`${API_ROOT}payments`, {
+    method: "POST",
+    body: JSON.stringify(paymentBody),
+    headers: {
+      "Content-Type": "application/json",
+    },
+  }).then((res) => res.json());
+  return payment;
+};
+export const getPayments = async () => {
+  try {
+    const payments = await fetch(`${API_ROOT}payments`).then((res) =>
+      res.json()
+    );
+    return payments;
+  } catch (error) {
+    console.error("Error fetching data:", error);
+    throw error;
+  }
+};
+export const getPaymentById = async (paymentId: string) => {
+  const payment = await fetch(`${API_ROOT}payments/${paymentId}`, {
+    cache: "no-cache",
+  }).then((res) => res.json());
+  return payment;
+};
+export const updatePayment = async (
+  paymentId: string,
+  updateBody: Partial<Payment>
+) => {
+  const payment = await fetch(`${API_ROOT}payments/${paymentId}`, {
+    method: "PUT",
+    body: JSON.stringify(updateBody),
+    headers: {
+      "Content-Type": "application/json",
+    },
+  }).then((res) => res.json());
+  return payment;
 };
 
 
