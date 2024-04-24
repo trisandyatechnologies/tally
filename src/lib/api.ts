@@ -24,21 +24,14 @@ export const updateUser = async (
 };
 
 export const createPayment = async (paymentBody: Payment) => {
-  try {
-    const response = await fetch(`${API_ROOT}payments`, {
-      method: "POST",
-      body: JSON.stringify(paymentBody),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    if (response.ok) {
-      const data = await response.json();
-      return data;
-    }
-  } catch (error) {
-    console.error("Error creating payments:", error);
-  }
+  const payment = await fetch(`${API_ROOT}payments`, {
+    method: "POST",
+    body: JSON.stringify(paymentBody),
+    headers: {
+      "Content-Type": "application/json",
+    },
+  }).then((res) => res.json());
+  return payment;
 };
 export const getPayments = async () => {
   try {
