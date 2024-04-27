@@ -1,58 +1,37 @@
 
-
-// import { Bill } from "@prisma/client";
-// import { create } from "zustand";
-// import { getBills } from "./api";
-
-// interface useBillsStore {
-//     bills: Bill[];
-//     setBills: () => void;
-// }
-
-// export const useBillsStore = create<useBillsStore>((set, get) => ({
-//     bills: [],
-//     setBills: async () => {
-//         const bills = await getBills();
-//         set({ bills });
-//     },
-// }));
-
-
-// import { Bill } from "@prisma/client";
-// import { create } from "zustand";
-// import { getAllBillsForUser } from "./api";
-
-// interface useBillsStore {
-//     bills: Bill[];
-//     setBills: (bills: Bill[]) => void; 
-// }
-
-// export const useBillsStore = create<useBillsStore>((set, get) => ({
-//     bills: [],
-//     setBills: (bills: Bill[]) => { 
-//         set({ bills });
-//     },
-// }));
-
-import { Bill, GoodsSupplier } from "@prisma/client";
+import {  GoodsSupplier } from "@prisma/client";
 import { create } from "zustand";
 import { getBills } from "./api";
 import moment from 'moment'; 
 
+interface Bill {
+    id: string;
+    name: string;
+    date: string;
+    amount: number;
+    type: string;
+    goodsSupplierId: string;
+    beforeAmount: number;
+    currentsupplierAmount: number;
+    userId: string;
+    billStatus: string;
+    goodsSupplier: GoodsSupplier; // Include goodsSupplier information
+}
+
 interface useBillsStore {
     bills: Bill[];
     notTransformedBills :Bill[];
-    fetchBills: (goods: GoodsSupplier[]) => Promise<void>;
+    fetchBills: () => Promise<void>;
 }
 
 export const useBillsStore = create<useBillsStore>((set, get) => ({
     bills: [],
     notTransformedBills : [],
-    fetchBills: async (goods: GoodsSupplier[]) => {
+    fetchBills: async () => {
         try {
             const bills = await getBills();
             set({ notTransformedBills: bills });
-            const transformedBills = transformBillData(bills, goods);
+            const transformedBills = transformBillData(bills);
             set({ bills: transformedBills });
         } catch (error) {
             console.error('Error fetching the bills:', error);
@@ -60,11 +39,10 @@ export const useBillsStore = create<useBillsStore>((set, get) => ({
     },
 }));
 
-const transformBillData = (data: Bill[], goods: GoodsSupplier[]): Bill[] => {
+const transformBillData = (data: Bill[]): Bill[] => {
     return data.map((bill, index) => {
         const serialName = index + 1;
-        const goodsSupplier = goods.find(supplier => supplier.id === bill.goodsSupplierId);
-        const goodsSupplierName = goodsSupplier ? goodsSupplier.name : 'Unknown';
+        const goodsSupplierName = bill.goodsSupplier.name;
         const formattedDate = moment.utc(bill.date).format('DD-MMM-YYYY'); 
         return {
             ...bill,

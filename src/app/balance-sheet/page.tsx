@@ -18,10 +18,20 @@ const { RangePicker } = DatePicker;
 
 const BalanceSheet: React.FC = () => {
 
+
+    const { data: session, status } = useSession();
+
+    const [userIdFromSession, setUserIdFromSession] = useState<string>(status === 'authenticated' ? session?.user?.id : '');
+    if (status === 'unauthenticated') {
+        redirect('/signin');
+    }
+
+
     const [filteredDate, setFilteredDate] = useState<string[]>([]);
     const [tableData, setTableData] = useState<any[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
     const [supplier, setSupplier] = useState<string>("");
+    const [supplierFilter, setSupplierFilter] = useState<string | undefined>();
 
 
     const billsFromStore = useBillsStore(state => state.notTransformedBills);
@@ -33,39 +43,9 @@ const BalanceSheet: React.FC = () => {
     const fetchPayments = usePaymentStore(state => state.setPayments);
 
 
-   
-    const { data: session, status } = useSession();
-
-    const [userIdFromSession, setUserIdFromSession] = useState<string>(status === 'authenticated' ? session?.user?.id : '');
-    if (status === 'unauthenticated') {
-        redirect('/signin');
-    }
-
-
-
-    useEffect(() => {
-        setLoading(true);
-        fetchPayments();
-        fetchGoods();
-        fetchBills(goodsFromStore)
-            .finally(() => setLoading(false));
-       
-    }, []);
-
-   
-
-    const loaderStyle: React.CSSProperties = {
-        position: 'absolute',
-        top: '50%',
-        right: '50%',
-        transform: 'translate(-50%,-50%)'
-
-    };
-    if (status === "loading") {
-        return <div style={loaderStyle}><Spin size="large" tip="Loading..." /></div>;
-    }
-
-
+    console.log("Bills from store", billsFromStore);
+    console.log("Payments From store",paymentsFromStore);
+    console.log("Goods From Store",goodsFromStore);
 
 
     const formattedBillsData = billsFromStore.map((bill, index) => ({
@@ -100,27 +80,45 @@ const BalanceSheet: React.FC = () => {
 
     const combinedData = [...formattedBillsData, ...formattedPaymentsData];
 
-    const filterBills = () => {
-        const filteredData = combinedData.filter(item => {
-            if (supplier && item.generatorOrReceiver !== supplier) return false;
-            if (filteredDate.length > 0) {
-                const itemDate = new Date(item.date).getTime();
-                const startDate = new Date(filteredDate[0]).getTime();
-                const endDate = new Date(filteredDate[1]).getTime();
-                if (itemDate < startDate || itemDate > endDate) return false;
-            }
-            return true;
-        });
+    const filteredDataItems = combinedData.filter(item => {
+        if(supplierFilter && item.generatorOrReceiver != supplierFilter) return false;
+        return true;
+    })
 
-        setTableData(filteredData);
-    };
 
+    useEffect(() => {
+        setLoading(true);
+        fetchPayments();
+        fetchGoods();
+        fetchBills()
+            .finally(() => setLoading(false));
+       
+    }, []);
 
 
     const handleSupplierSelect = (supplierIdentifier: string) => {
-        setSupplier(goodsFromStore.find(supplier => supplier.id === supplierIdentifier)?.name || "",);
-        filterBills();
+        const suppliername = goodsFromStore.find((supplier) => supplier.id === supplierIdentifier)?.name!;
+        console.log("Suplier name", suppliername);
+        setSupplier(suppliername);
+        setSupplierFilter(suppliername);
     };
+
+
+    const loaderStyle: React.CSSProperties = {
+        position: 'absolute',
+        top: '50%',
+        right: '50%',
+        transform: 'translate(-50%,-50%)'
+    };
+
+
+
+    if (status === "loading") {
+        return <div style={loaderStyle}><Spin size="large" tip="Loading..." /></div>;
+    }
+
+
+
 
     const columns = [
         {
@@ -176,14 +174,6 @@ const BalanceSheet: React.FC = () => {
         <>
             <Flex justify="space-between" style={{ margin: 8 }}>
                 <GoodsSupplierSelect onSupplierSelect={handleSupplierSelect} />
-                <RangePicker
-                    showTime={{ format: "HH:mm" }}
-                    format="YYYY-MM-DD HH:mm"
-                    onChange={(value, dateString) => {
-                        setFilteredDate(dateString);
-                        filterBills();
-                    }}
-                />
             </Flex>
 
             <div style={{ overflowX: 'auto' }}>
@@ -192,7 +182,7 @@ const BalanceSheet: React.FC = () => {
                         <Spin size="large" />
                     </div>
                 ) : (
-                    <Table dataSource={tableData} columns={columns} pagination={{ pageSize: 5 }} scroll={{ x: 'max-content', y: 240 }} />
+                    <Table dataSource={filteredDataItems} columns={columns} pagination={{ pageSize: 5 }} scroll={{ x: 'max-content', y: 240 }} />
                 )}
             </div>
         </>

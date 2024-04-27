@@ -130,8 +130,20 @@ export const getSupplier = async () => {
 
 
 export const getBills = async () => {
-    const bills = await fetch(`${API_ROOT}bill/view`).then((res) => res.json());
-    return bills;
+    try {
+        const bills = await fetch(`${API_ROOT}bill/view`).then((res) =>{
+            if(!res.ok){
+                throw new Error('API request failed');
+            }
+            return res.json();
+        });
+        console.log("Bills in API");
+        return bills;
+    }
+    catch(error){
+        console.error("Error fetching data", error);
+        return null;
+    }
 };
 
 

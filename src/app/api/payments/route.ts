@@ -2,6 +2,8 @@
 
 import prisma from "@/lib/prisma";
 import { NextResponse } from "next/server";
+import { getServerSession } from 'next-auth';
+import { authOptions } from "@/lib/auth";
 
 export async function POST(req: Request, res: Response) {
     const { userId, goodsSupplierId, amount, ...paymentBody } = await req.json();
@@ -43,6 +45,20 @@ export async function POST(req: Request, res: Response) {
     return NextResponse.json(payment);
 }
 export async function GET(req: Request, res: Response) {
-    const payments = await prisma.payment.findMany({});
-    return NextResponse.json(payments);
+    try {
+        const session = await getServerSession(authOptions);
+
+        // const url = new URL(req.url);
+        // const user = url.searchParams.get('userId') as string;
+
+        const orders = await prisma.payment.findMany({
+            where: {
+                userId: session?.user.id,
+            },
+        });
+        return NextResponse.json(orders);
+    } catch (error) {
+        console.error('Error fetching orders:', error);
+        return NextResponse.json([]);
+    }
 }

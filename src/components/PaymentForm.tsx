@@ -42,6 +42,11 @@ export default function RecordCash() {
     const [goodsSupplierId, setGoodsSupplierId] = useState<string>('');
 
     const onFinish = async (values: any) => {
+        
+        if(goodsSupplierId == ''){
+            alert("plese select supplier");
+            return;
+        }
         console.log("Received values of form: ", values);
         const { amount } = values;
 
@@ -92,14 +97,7 @@ export default function RecordCash() {
                 <Input placeholder="select your voucher Number" />
             </Form.Item>
 
-            {/* <Form.Item
-                name="receiver"
-                label="Received Cash"
-                rules={[{ required: true, message: "Please enter the receiver" }]}
-            >
-                <Input placeholder="select your received Cash" />
-            </Form.Item> */}
-
+           
             <Form.Item name="note" label="Note">
                 <Input.TextArea />
             </Form.Item>
@@ -113,40 +111,13 @@ export default function RecordCash() {
                     <Select.Option value="DIGITAL">Digital</Select.Option>
                 </Select>
             </Form.Item>
-            {/* <Form.Item
-                name="paymentMethod"
-                label="PaymentMethod"
-                rules={[{ required: false, message: "Please select the payment type" }]}
+
+            <Form.Item 
+                name="goodsSupplierId" 
+                label="Goods Supplier ID"
+              
             >
-                <Select
-                    placeholder="select your Payment Method"
-                    style={{ width: "100%" }}
-                    onChange={handleChange}
-                    options={[
-                        {
-                            label: <span>UPI</span>,
-                            title: "UPI",
-                            options: [
-                                { label: <span>Google Pay</span>, value: "GooglePay" },
-                                { label: <span>Phone Pay</span>, value: "Phone Pay" },
-                                { label: <span>other Pay</span>, value: "Other Pay" },
-                            ],
-                        },
-                        {
-                            label: <span> Bank Transfer</span>,
-                            title: "Bank Transfer",
-                            options: [{ label: <span>Bank Name</span>, value: "Bank Name" }],
-                        },
-                    ]}
-                />
-            </Form.Item> */}
-
-            <Form.Item name="goodsSupplierId" label="Goods Supplier ID">
                 <GoodsSupplierSelect onSupplierSelect={handleSupplierSelect} />
-            </Form.Item>
-
-            <Form.Item name="userId" label="User ID">
-                <Typography>{session?.user.id}</Typography>
             </Form.Item>
 
             <Form.Item {...tailFormItemLayout}>

@@ -52,7 +52,7 @@ const Bills: React.FC = () => {
     useEffect(() => {
         setLoading(true);
         fetchGoods();
-        fetchBills(goodsFromStore).
+        fetchBills().
             finally(() => setLoading(false));
     }, []);
 
