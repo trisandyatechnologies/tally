@@ -37,7 +37,7 @@
 import { Bill, GoodsSupplier } from "@prisma/client";
 import { create } from "zustand";
 import { getBills } from "./api";
-import moment from 'moment'; // Import moment for date formatting
+import moment from 'moment'; 
 
 interface useBillsStore {
     bills: Bill[];

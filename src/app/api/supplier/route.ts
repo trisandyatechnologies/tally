@@ -17,31 +17,6 @@ interface GoodsSupplierRequestBody {
     owner: string;
 }
 
-// export async function POST(req: NextRequest, res: NextResponse) {
-
-//         try {
-//             const {userId, ...restBody} = await req.json();
-//             const newGoodsSupplier = await prisma.goodsSupplier.create({
-//                 data: {
-//                    ...restBody,
-//                     user: {
-//                         connect: {
-//                             id: userId,
-//                         },
-//                     },
-//                 },
-//             });
-
-//             return NextResponse.json({ newGoodsSupplier, status: 200 });
-//         } catch (error) {
-//             console.error('Error adding goods supplier:', error);
-//             return NextResponse.json({
-//                 error: "User ID is required as a query parameter",
-//                 status: 400
-//             });
-//         }
-
-// }
 
 export async function POST(req: NextRequest, res: Response) {
     const session = await getServerSession(authOptions);
@@ -66,44 +41,38 @@ export async function POST(req: NextRequest, res: Response) {
 }
 
 
-// type UserRequestParams = {
-//     params: {
-//         userId: string;
-//     };
-// };
 
 
+// export async function GET(req: Request, res: Response) {
+//     const session = await getServerSession(authOptions);
 
-// export async function GET(req: NextRequest,  res: NextResponse) {
-//     try {
-
-//         console.log(req);
-//         const userId = req.nextUrl.searchParams.get('userId') as string;
-
-//         const goodsSuppliers = await prisma.goodsSupplier.findMany({
-//             where: {
-//                 userId: userId,
-//             },
-//         });
-
-//         return NextResponse.json({ goodsSuppliers, status: 200 });
-//     } catch (error) {
-//         console.error('Error fetching goods suppliers:', error);
-//         return NextResponse.json({
-//             error: "User ID is required as a query parameter",
-//             status: 400
-//         });
-//     }
+//     // const url = new URL(req.url);
+//     // const user = url.searchParams.get('userId') as string;
+    
+//     const orders = await prisma.goodsSupplier.findMany({
+//         where: {
+//             userId: session?.user.id,
+//         },
+//     });
+//     return NextResponse.json(orders);
 // }
 
 
 export async function GET(req: Request, res: Response) {
-    const session = await getServerSession(authOptions);
+    try {
+        const session = await getServerSession(authOptions);
 
-    const orders = await prisma.goodsSupplier.findMany({
-        where: {
-            userId: session?.user.id,
-        },
-    });
-    return NextResponse.json(orders);
+        // const url = new URL(req.url);
+        // const user = url.searchParams.get('userId') as string;
+
+        const orders = await prisma.goodsSupplier.findMany({
+            where: {
+                userId: session?.user.id,
+            },
+        });
+        return NextResponse.json(orders);
+    } catch (error) {
+        console.error('Error fetching orders:', error);
+        return NextResponse.json([]); 
+    }
 }

@@ -4,17 +4,21 @@
 
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { Form, Input, Button, message } from 'antd';
+import { useRouter, redirect } from 'next/navigation';
+import { Form, Input, Button, message, Spin } from 'antd';
 import { useSession } from 'next-auth/react';
 import { createSupplier } from '@/lib/api';
 
 export default function AddGoodsSupplier() {
     const router = useRouter();
     const [loading, setLoading] = useState(false);
-    const { data: session } = useSession();
+    // const { data: session } = useSession();
 
-   
+    const { data: session, status } = useSession();
+    const [userIdFromSession, setUserIdFromSession] = useState<string>(status === 'authenticated' ? session?.user?.id : '');
+    if (status === 'unauthenticated') {
+        redirect('/signin');
+    }
 
     const [form] = Form.useForm()
     const onFinish = async (values: any) => {
@@ -31,10 +35,21 @@ export default function AddGoodsSupplier() {
         }
     };
 
+    const loaderStyle: React.CSSProperties = {
+        position: 'absolute',
+        top: '50%',
+        right: '50%',
+        transform: 'translate(-50%,-50%)'
+
+    };
+    if (status === "loading") {
+        return <div style={loaderStyle}><Spin size="large" tip="Loading..." /></div>;
+    }
+
     return (
-        <div style={{ padding: '2rem' }}>
+        <div style={{  }}>
             <h1>Add Goods Supplier</h1>
-            <Form layout="vertical" onFinish={onFinish} form={form}>
+            <Form layout="vertical"  onFinish={onFinish} form={form} style={{width:'50%', marginLeft: '10px', gap:"0px"}}>
                 {/* Remove userId field from the form */}
                 <Form.Item label="Name" name="name" rules={[{ required: true }]}>
                     <Input />

@@ -23,6 +23,6 @@ export async function GET(req: Request, res: Response) {
             goodsSupplier: true,
         }
     });
-    console.log(orders);
+    // console.log(orders);
     return NextResponse.json(orders);
 }

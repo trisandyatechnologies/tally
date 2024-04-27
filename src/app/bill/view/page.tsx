@@ -3,14 +3,25 @@
 
 // Bills.tsx
 import React, { useState, useEffect } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { redirect, useSearchParams } from 'next/navigation';
 import { Table, Space, Select, DatePicker, Button, Typography, Spin } from 'antd';
 import GoodsSupplierSelect from '@/components/GoodsSupplierSelect';
 import moment from 'moment';
 import { useBillsStore } from '@/lib/useBillsStore';
 import { useGoodsStore } from '@/lib/useGoodsStore';
+import { useSession } from 'next-auth/react';
+import Link from 'next/link';
 
 const Bills: React.FC = () => {
+
+    const { data: session, status } = useSession();
+    const [userIdFromSession, setUserIdFromSession] = useState<string>(status === 'authenticated' ? session?.user?.id : '');
+    if (status === 'unauthenticated') {
+        redirect('/signin');
+    }
+
+    
+
     const searchParams = useSearchParams();
     const userId = searchParams.get('userId') as string;
     const [billTypeFilter, setBillTypeFilter] = useState<string | undefined>();
@@ -85,7 +96,7 @@ const Bills: React.FC = () => {
                                 onChange={date => {
                                     if (date) {
                                         const formattedDate = moment(date.toDate()).format('DD-MMM-YYYY');
-                                        console.log("This is formattedDate", formattedDate);
+                                        // console.log("This is formattedDate", formattedDate);
                                         setDateFilter(formattedDate);
                                     } else {
                                         setDateFilter(undefined); // If date is null or undefined, reset the filter
@@ -97,11 +108,14 @@ const Bills: React.FC = () => {
 
 
                         <Button onClick={resetFilters}>Reset Filters</Button>
+                        <Button style={{background:"skyblue", color:'black', fontWeight:'bold'}}><Link href="/supplier">Add a New Supplier</Link></Button>
+                        
+                        
                     </Space>
-                    <Table dataSource={filteredBills} style={{ margin: '1rem' }}>
+                        <Table dataSource={filteredBills} style={{ margin: '1rem' }} scroll={{ x: 'max-content', y: 240 }}>
                         <Table.Column title="Serial Name" dataIndex="serialName" key="serialName" />
                         <Table.Column title="Name" dataIndex="name" key="name" />
-                        <Table.Column title="Date" dataIndex="formattedDate" key="date" /> {/* Use formattedDate here */}
+                        <Table.Column title="Date" dataIndex="formattedDate" key="date" /> 
                         <Table.Column title="Amount" dataIndex="amount" key="amount" />
                         <Table.Column title="Type" dataIndex="type" key="type" />
                         <Table.Column title="Goods Supplier" dataIndex="goodsSupplierName" key="goodsSupplierName" />

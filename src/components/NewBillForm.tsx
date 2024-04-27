@@ -19,6 +19,7 @@ export default function NewBillForm() {
     const router = useRouter();
 
     if (status !== 'authenticated') {
+        alert("Not authenticated");
         router.push('/signin');
         return;
     }
