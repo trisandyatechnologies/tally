@@ -9,6 +9,7 @@ import { signOut, useSession } from "next-auth/react";
 import { useUserStore } from "@/lib/userStore";
 import { Layout, Space, Menu } from "antd";
 import { UserOutlined, BankOutlined, PoweroffOutlined, ShoppingFilled, MenuOutlined } from "@ant-design/icons";
+import { usePathname } from "next/navigation";
 
 const { useToken } = theme;
 const { Paragraph } = Typography;
@@ -84,6 +85,8 @@ const HeaderMenu: React.FC = () => {
 
 
 
+
+
     return (
         <Flex>
             {session?.user && (
@@ -109,11 +112,17 @@ const HeaderMenu: React.FC = () => {
 
 interface HeaderProps {
     toggleDrawer: () => void; // Define the toggleDrawer prop
+
 }
 
 const Header: React.FC<HeaderProps> = ({toggleDrawer}) => {
     const { token: { padding, colorBgContainer } } = useToken();
     const { md } = Grid.useBreakpoint();
+    const urlPath = usePathname();
+    // const pathItem = urlPath.split('/');
+    const excludedPages = ['/signin', '/signup'];
+
+    const hideMenu = excludedPages.includes(urlPath);
 
     return (
         <Layout.Header
@@ -150,7 +159,7 @@ const Header: React.FC<HeaderProps> = ({toggleDrawer}) => {
                         />
                     )}
                 </Link>
-                {!md && < Button
+                {!md && !hideMenu && < Button
                     type="text"
                     onClick={toggleDrawer}
                     style={{ marginLeft: 'auto' }}

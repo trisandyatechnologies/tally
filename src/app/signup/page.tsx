@@ -26,6 +26,7 @@ import { signIn, useSession } from "next-auth/react";
 import { message } from "@/lib/notify";
 import { useRouter } from "next/navigation";
 import { error } from "console";
+import Image from "next/image";
 
 const Signup: React.FC = () => {
   const {
@@ -176,7 +177,18 @@ const Signup: React.FC = () => {
       </Col>
       <Col lg={1}></Col>
       <Col lg={14} xs={0}>
-        <Flex style={{height:600,padding:"0 50px 20px"}}><img src="image 3.png" height="100%"/>
+        <Flex style={{height:600,padding:"0 50px 20px"}}>
+            {/* <img src="image 3.png" height="100%" width="60%"/> */}
+                      <Image
+                          src="/Image 3.png"
+                          width={500}
+                          height={500}
+                          quality={100}
+                          priority={true}
+                          style={{objectFit:"contain"}}
+                          loading = 'eager'
+                          alt="Picture of the author"
+                      />
         </Flex>
       </Col>
       </Row>

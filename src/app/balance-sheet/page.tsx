@@ -43,11 +43,6 @@ const BalanceSheet: React.FC = () => {
     const fetchPayments = usePaymentStore(state => state.setPayments);
 
 
-    console.log("Bills from store", billsFromStore);
-    console.log("Payments From store",paymentsFromStore);
-    console.log("Goods From Store",goodsFromStore);
-
-
     const formattedBillsData = billsFromStore.map((bill, index) => ({
         index: index.toString(),
         date: bill.date,
@@ -78,7 +73,18 @@ const BalanceSheet: React.FC = () => {
         supplierNamesMap.set(supplier.id, supplier.name);
     });
 
-    const combinedData = [...formattedBillsData, ...formattedPaymentsData];
+    const combinedData = [...formattedBillsData, ...formattedPaymentsData].sort((a,b) => {
+        const dateA = new Date(a.date);
+        const dateB = new Date(b.date);
+
+        if (dateA < dateB) {
+            return 1; 
+        }
+        if (dateA > dateB) {
+            return -1; 
+        }
+        return 0; 
+    });
 
     const filteredDataItems = combinedData.filter(item => {
         if(supplierFilter && item.generatorOrReceiver != supplierFilter) return false;

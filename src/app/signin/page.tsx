@@ -110,7 +110,7 @@ const Signin: React.FC = () => {
             >
               Signin
             </Button>
-           <Typography style={{display:"flex",justifyContent:"center",gap:5,margin:10}}>Don't have an account ? <Link href="/signup">  Signup</Link></Typography> 
+           <Typography style={{display:"flex",justifyContent:"center",gap:5,margin:10}}>Do not have an account ? <Link href="/signup">  Signup</Link></Typography> 
           </Form.Item>
         </Form>
       </Flex>
