@@ -3,6 +3,7 @@ import {  GoodsSupplier } from "@prisma/client";
 import { create } from "zustand";
 import { getBills } from "./api";
 import moment from 'moment'; 
+import { format } from "date-fns";
 
 interface Bill {
     id: string;
@@ -43,7 +44,8 @@ const transformBillData = (data: Bill[]): Bill[] => {
     return data.map((bill, index) => {
         const serialName = index + 1;
         const goodsSupplierName = bill.goodsSupplier.name;
-        const formattedDate = moment.utc(bill.date).format('DD-MMM-YYYY'); 
+        // const formattedDate = moment.utc(bill.date).format('DD-MMM-YYYY');
+        const formattedDate = format(new Date(bill.date), 'dd/MM/yyyy')
         return {
             ...bill,
             formattedDate, 

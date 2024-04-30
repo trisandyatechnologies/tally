@@ -32,6 +32,7 @@ const BalanceSheet: React.FC = () => {
     const [loading, setLoading] = useState<boolean>(false);
     const [supplier, setSupplier] = useState<string>("");
     const [supplierFilter, setSupplierFilter] = useState<string | undefined>();
+    const [month, setMonth] = useState<string | null> (null);
 
 
     const billsFromStore = useBillsStore(state => state.notTransformedBills);
@@ -87,6 +88,17 @@ const BalanceSheet: React.FC = () => {
     });
 
     const filteredDataItems = combinedData.filter(item => {
+        if(filteredDate.length) {
+            if (filteredDate.length === 2) {
+                const itemDate = new Date(item.date);
+                const startDate = new Date(filteredDate[0] + '-01');
+                const endDate = new Date(filteredDate[1] + '-01');
+                const endOfMonth = new Date(new Date(filteredDate[1] + '-01').getFullYear(), new Date(filteredDate[1] + '-01').getMonth() + 1, 0); // Last day of the month
+
+                // Filter items that fall within the selected range of months
+                return itemDate >= startDate && itemDate <= endOfMonth;
+            }
+        }
         if(supplierFilter && item.generatorOrReceiver != supplierFilter) return false;
         return true;
     })
@@ -108,6 +120,15 @@ const BalanceSheet: React.FC = () => {
         setSupplier(suppliername);
         setSupplierFilter(suppliername);
     };
+
+    const handleMonthChange = (dates: any, dateStrings: string[]) => {
+        console.log("Datestrings", dateStrings);
+        if (dateStrings[0].length === 0 || dateStrings[1].length === 0) {
+            setFilteredDate([]);
+        } else {
+            setFilteredDate([dateStrings[0], dateStrings[1]]);
+        }
+    }
 
 
     const loaderStyle: React.CSSProperties = {
@@ -180,6 +201,11 @@ const BalanceSheet: React.FC = () => {
         <>
             <Flex justify="space-between" style={{ margin: 8 }}>
                 <GoodsSupplierSelect onSupplierSelect={handleSupplierSelect} />
+                <RangePicker 
+                    picker="month"
+                    onChange ={handleMonthChange}
+                    style={{marginRight:"16px"}}
+                />
             </Flex>
 
             <div style={{ overflowX: 'auto' }}>
